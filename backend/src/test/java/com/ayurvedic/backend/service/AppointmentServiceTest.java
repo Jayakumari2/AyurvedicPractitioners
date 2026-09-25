@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import com.ayurvedic.backend.domain.PatientProfile;
+import com.ayurvedic.backend.domain.AppointmentStatus;
 import com.ayurvedic.backend.domain.PractitionerProfile;
 import com.ayurvedic.backend.domain.User;
 import com.ayurvedic.backend.domain.UserRole;
@@ -61,7 +62,7 @@ class AppointmentServiceTest {
         when(appointmentRepository.existsByPractitionerProfileIdAndDateAndStartTimeAndStatusNot(20L,
                 LocalDate.of(2026, 9, 30),
                 LocalTime.of(10, 0),
-                "CANCELLED")).thenReturn(true);
+                AppointmentStatus.CANCELLED)).thenReturn(true);
 
         AppointmentService appointmentService = new AppointmentService(
                 appointmentRepository,

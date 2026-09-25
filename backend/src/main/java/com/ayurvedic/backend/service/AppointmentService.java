@@ -12,6 +12,7 @@ import com.ayurvedic.backend.repository.PatientProfileRepository;
 import com.ayurvedic.backend.repository.PractitionerProfileRepository;
 import com.ayurvedic.backend.repository.UserRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new IllegalArgumentException("Practitioner profile not found"));
 
         boolean exists = appointmentRepository.existsByPractitionerProfileIdAndDateAndStartTimeAndStatusNot(
-                practitioner.getId(), date, startTime, AppointmentStatus.CANCELLED.name());
+            practitioner.getId(), date, startTime, AppointmentStatus.CANCELLED);
         if (exists) {
             throw new IllegalStateException("This slot is already booked for the practitioner");
         }
@@ -67,6 +68,7 @@ public class AppointmentService {
         appointment.setEndTime(endTime);
         appointment.setNotes(notes);
         appointment.setStatus(AppointmentStatus.PENDING);
+        appointment.setCreatedAt(LocalDateTime.now());
         return appointmentRepository.save(appointment);
     }
 

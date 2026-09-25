@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import Dashboard from './Dashboard'
 
 const features = [
   'Patient registration and secure login',
@@ -15,7 +16,16 @@ const roles = [
   { name: 'Admins', description: 'Verify practitioners, review users, and monitor appointments.' },
 ]
 
+type SessionUser = {
+  fullName: string
+  role: 'PATIENT' | 'PRACTITIONER'
+}
+
 function App() {
+  const [session, setSession] = useState<SessionUser | null>(() => {
+    const storedUser = localStorage.getItem('ayurvediccare_user')
+    return storedUser ? JSON.parse(storedUser) as SessionUser : null
+  })
   const [authMode, setAuthMode] = useState<'login' | 'register' | null>(null)
   const [role, setRole] = useState<'PATIENT' | 'PRACTITIONER'>('PATIENT')
   const [email, setEmail] = useState('')
@@ -53,7 +63,8 @@ function App() {
 
       localStorage.setItem('ayurvediccare_token', data.token)
       localStorage.setItem('ayurvediccare_user', JSON.stringify({ fullName: data.fullName, role: data.role }))
-      setMessage(`${authMode === 'login' ? 'Welcome back' : 'Registration complete'}, ${data.fullName}.`)
+      setSession({ fullName: data.fullName, role: data.role })
+      setAuthMode(null)
       setEmail('')
       setPassword('')
       setFullName('')
@@ -62,6 +73,10 @@ function App() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  if (session) {
+    return <Dashboard user={session} onLogout={() => { localStorage.removeItem('ayurvediccare_token'); localStorage.removeItem('ayurvediccare_user'); setSession(null) }} />
   }
 
   return (

@@ -67,6 +67,12 @@ public class PractitionerController {
                 PractitionerProfile.VerificationStatus.VERIFIED));
     }
 
+    @GetMapping("/discover")
+    @PreAuthorize("hasAnyRole('PATIENT', 'PRACTITIONER')")
+    public ResponseEntity<List<PractitionerProfile>> discoverPractitioners() {
+        return ResponseEntity.ok(practitionerProfileRepository.findAll());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PractitionerProfile> getPractitioner(@PathVariable Long id) {
         return ResponseEntity.ok(practitionerProfileRepository.findById(id)
